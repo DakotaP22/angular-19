@@ -1,24 +1,58 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { BasicPearlerTrayComponent } from '../components/basic-pearler-tray.component';
+import { PearlerDesignerToolbarComponent } from '../components/toolbar.component';
 
 @Component({
-    selector: 'pearler-pattern-maker-page',
-    imports: [BasicPearlerTrayComponent],
-    styles: `
+  selector: 'pearler-pattern-maker-page',
+  imports: [PearlerDesignerToolbarComponent, BasicPearlerTrayComponent],
+  styles: `
         :host {
             display: flex;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            overflow: auto;
+            flex-grow: 1;
+            border: 5px solid black;
+
+            /* Hide scrollbar for WebKit browsers */
+            ::-webkit-scrollbar {
+                display: none;
+            }
+            /* Hide scrollbar for IE, Edge */
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+        }
+
+        .canvas {
+            display: grid;
+            place-content: center;
+            width: 10000px;
+            height: 10000px;
         }
     `,
-    template: `
-        <basic-pearler-tray 
-            [width]="28"
-            [height]="30"
-            [pearlerSize]="18"
-            [rgb]="[0,0,0]"
-        />
-    `
-    
-})
+  template: `
+    <pearler-designer-toolbar />
 
+    <div class="canvas-container" #canvasContainer>
+      <div class="canvas">
+        <basic-pearler-tray
+          [width]="28"
+          [height]="16"
+          [pearlerSize]="16"
+          [rgb]="[0, 0, 0]"
+        />
+      </div>
+    </div>
+  `,
+})
 export class PearlerPatternMakerPageComponent {
+  @ViewChild('canvasContainer') canvasContainer!: ElementRef;
+
+  ngAfterViewInit() {
+    const container = this.canvasContainer.nativeElement;
+    container.scrollTop = (container.scrollHeight - container.clientHeight) / 2;
+    container.scrollLeft = (container.scrollWidth - container.clientWidth) / 2;
+  }
 }

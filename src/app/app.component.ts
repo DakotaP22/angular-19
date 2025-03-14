@@ -6,13 +6,22 @@ import { MenubarModule } from 'primeng/menubar';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, MenubarModule],
+  styles: `
+    :host {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      height: 100vh;
+      overflow: none;
+    }
+  `,
   template: `
     <p-menubar [model]="menuItems">
       <ng-template #start>
           <h1>Kandi Designer</h1>
       </ng-template>
     </p-menubar>
-    <router-outlet />
+    <router-outlet/>
   `
 })
 export class AppComponent {
