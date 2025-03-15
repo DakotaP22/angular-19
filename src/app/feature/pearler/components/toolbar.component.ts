@@ -29,6 +29,7 @@ import { ColorPickerComponent } from './color-picker.component';
             flex-wrap: nowrap;
             gap: .5rem;
             align-items: flex-end;
+            padding: 0 .5rem;
         }
     `,
   template: `
