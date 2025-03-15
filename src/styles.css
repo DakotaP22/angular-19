@@ -9,7 +9,7 @@ body {
 }
 
 .form-input-group {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
 
   label {

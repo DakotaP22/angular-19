@@ -19,7 +19,7 @@ import { ColorPickerComponent } from './color-picker.component';
             display: flex;
             flex-direction: column;
             height: 100%;
-            flex: 0 0 350px;
+            flex: 0 0 150px;
             border: 1px solid rgba(0,0,0,0.2);
             gap: 1rem;
         }
@@ -30,6 +30,10 @@ import { ColorPickerComponent } from './color-picker.component';
             gap: .5rem;
             align-items: flex-end;
             padding: 0 .5rem;
+
+            input {
+              width: 75px;
+            }
         }
     `,
   template: `
