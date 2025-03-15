@@ -1,4 +1,4 @@
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { Component, computed, ElementRef, signal, ViewChild } from '@angular/core';
 import { BasicPearlerTrayComponent } from '../components/basic-pearler-tray.component';
 import { PearlerDesignerToolbarComponent } from '../components/toolbar.component';
 
@@ -37,6 +37,7 @@ import { PearlerDesignerToolbarComponent } from '../components/toolbar.component
       [(pearlerSize)]="pearlerSize"
       [(width)]="width"
       [(height)]="height"
+      [(color)]="color"
     />
 
     <div class="canvas-container" #canvasContainer>
@@ -45,7 +46,7 @@ import { PearlerDesignerToolbarComponent } from '../components/toolbar.component
           [width]="width()"
           [height]="height()"
           [pearlerSize]="pearlerSize()"
-          [rgb]="[0, 0, 0]"
+          [rgb]="colorArray()"
         />
       </div>
     </div>
@@ -57,6 +58,13 @@ export class PearlerPatternMakerPageComponent {
   pearlerSize = signal<number>(12);
   width = signal<number>(32);
   height = signal<number>(32);
+  
+  color = signal<{ r: number; g: number; b: number }>({ r: 0, g: 0, b: 0 });
+  colorArray = computed<[number, number, number]>(() => {
+    const color = this.color();
+    return [color.r, color.g, color.b];
+  })
+  
 
   ngAfterViewInit() {
     const container = this.canvasContainer.nativeElement;
