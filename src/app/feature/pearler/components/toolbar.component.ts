@@ -37,11 +37,6 @@ import { ColorPickerComponent } from './color-picker.component';
         }
     `,
   template: `
-    <div>
-      <p-button class="red-button" label="Zoom In" (click)="zoomIn()" />
-      <p-button label="Zoom Out" (click)="zoomOut()" />
-    </div>
-
     <form class="dimension-form">
       <span class="form-input-group">
         <label for="width">Tray Width</label>
@@ -70,16 +65,7 @@ import { ColorPickerComponent } from './color-picker.component';
   `,
 })
 export class PearlerDesignerToolbarComponent {
-  pearlerSize = model.required<number>();
   width = model.required<number>();
   height = model.required<number>();
   color = model.required<{ r: number; g: number; b: number }>();
-
-  zoomIn() {
-    this.pearlerSize.set(this.pearlerSize() + 1);
-  }
-
-  zoomOut() {
-    this.pearlerSize.set(this.pearlerSize() - 1);
-  }
 }

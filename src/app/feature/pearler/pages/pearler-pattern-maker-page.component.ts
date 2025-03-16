@@ -29,7 +29,6 @@ import { PearlerDesignerToolbarComponent } from '../components/toolbar.component
   `,
   template: `
     <pearler-designer-toolbar
-      [(pearlerSize)]="pearlerSize"
       [(width)]="width"
       [(height)]="height"
       [(color)]="color"
@@ -39,14 +38,13 @@ import { PearlerDesignerToolbarComponent } from '../components/toolbar.component
       <basic-pearler-tray
         [width]="width()"
         [height]="height()"
-        [pearlerSize]="pearlerSize()"
+        [pearlerSize]="12"
         [rgb]="colorArray()"
       />
     </app-canvas>
   `,
 })
 export class PearlerPatternMakerPageComponent {
-  pearlerSize = signal<number>(12);
   width = signal<number>(32);
   height = signal<number>(32);
 

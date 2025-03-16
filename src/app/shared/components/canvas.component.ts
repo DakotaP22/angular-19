@@ -4,14 +4,27 @@ import {
   ElementRef,
   inject,
   input,
-  model
+  model,
+  signal,
+  ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { SliderModule } from 'primeng/slider';
 
 @Component({
   selector: 'app-canvas',
+  imports: [SliderModule, FormsModule],
   styles: `
+
     :host {
+      overflow: hidden;
+      position: relative;
+      display: flex;
+    }
+
+    .canvas-container {
       overflow: auto;
+      border: 5px solid black;
 
       ::-webkit-scrollbar {
         display: none;
@@ -24,27 +37,49 @@ import {
       place-content: center;
       width: 10000px;
       height: 10000px;
+      position: relative;
+      transform-origin: center center;
     }
+
+    .slider-container {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      p {
+        margin: 0 0 4px 0;
+      }
+    }
+
   `,
   template: `
-    <div class="canvas">
-      <ng-content />
+    <div class="slider-container">
+      <p>{{ scale() }}%</p>
+      <p-slider 
+        orientation="vertical" 
+        step="10" 
+        min="10"
+        max="200"
+        [(ngModel)]="scale"
+      ></p-slider>
+    </div>
+
+    <div #canvasContainer class="canvas-container">
+      <div class="canvas" [style.transform]="'scale(' + scale() / 100 + ')'">
+        <ng-content />
+      </div>
     </div>
   `,
 })
 export class CanvasComponent {
-  private readonly canvasContainer = inject(ElementRef);
+  @ViewChild('canvasContainer') canvasContainer!: ElementRef<HTMLDivElement>;
 
-    scale = model<number>(1);
-    scaleMax = input<number>(2);
-    scaleMin = input<number>(0);
-
-    limitedScale = computed(() => {
-      const s = this.scale();
-      const max = this.scaleMax();
-      const min = this.scaleMin();
-      return Math.max(min, Math.min(max, s));
-    });
+  scale = signal<number>(100);
 
   ngAfterViewInit() {
     const container = this.canvasContainer.nativeElement;
