@@ -35,12 +35,12 @@ import { BackgroundColorPipe } from '../pipes/background-color.pipe';
         .add-tray-btn.up { transform: translate(-50%, -125%); top: 0; left: 50%; }
         .add-tray-btn.down { transform: translate(-50%, 125%); bottom: 0; left: 50%; }
         .add-tray-btn.left { 
-            transform: translate(-54%, 0%) rotate(-90deg);
+            transform: translate(-60%, 0%) rotate(-90deg);
             top: 50%; 
             left: 0; 
         }
         .add-tray-btn.right { 
-            transform: translate(54%, 0%) rotate(90deg);
+            transform: translate(60%, 0%) rotate(90deg);
             top: 50%;
             right: 0;
         }
