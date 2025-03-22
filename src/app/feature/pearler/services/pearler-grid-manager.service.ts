@@ -34,6 +34,20 @@ export class PearlerGridManagerService {
     );
   }
 
+  clearGrids() {
+    this.pearlerGrids.update((grids) => {
+      if (!!grids && grids.size > 0) {
+        const [ width, height ] = this.getCurrentGridDimensions();
+
+        for(const key of grids.keys()) {
+          grids.set(key, this.getEmptyGrid(width, height));
+        }
+      }
+
+      return grids;
+    });
+  }
+
   setPixelColor(
     gridPositionKey: string,
     row: number,
@@ -70,5 +84,15 @@ export class PearlerGridManagerService {
       .split(':')
       .map((s) => parseInt(s))
       .slice(0, 2) as [number, number];
+  }
+
+  private getCurrentGridDimensions(): [number, number] {
+    const grids = this.pearlerGrids();
+    if (!grids || grids.size === 0) return [0, 0];
+
+    const grid = grids.get(this.getGridLocationKey(0, 0));
+    if (!grid) return [0, 0];
+
+    return [grid[0].length, grid.length];
   }
 }

@@ -1,4 +1,4 @@
-import { Component, model } from '@angular/core';
+import { Component, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -38,8 +38,11 @@ import { ColorPickerComponent } from './color-picker.component';
     `,
   template: `
     <color-picker [(color)]="color" />
+
+    <button pButton (click)="clear.emit()">Clear</button>
   `,
 })
 export class PearlerDesignerToolbarComponent {
   color = model.required<{ r: number; g: number; b: number }>();
+  clear = output<void>();
 }
