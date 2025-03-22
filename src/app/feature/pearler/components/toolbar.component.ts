@@ -37,35 +37,9 @@ import { ColorPickerComponent } from './color-picker.component';
         }
     `,
   template: `
-    <form class="dimension-form">
-      <span class="form-input-group">
-        <label for="width">Tray Width</label>
-        <input
-          id="width"
-          type="number"
-          [(ngModel)]="width"
-          name="width"
-          min="1"
-        />
-      </span>
-      X
-      <span class="form-input-group">
-        <label for="height">Tray Height</label>
-        <input
-          id="height"
-          type="number"
-          [(ngModel)]="height"
-          name="height"
-          min="1"
-        />
-      </span>
-    </form>
-
     <color-picker [(color)]="color" />
   `,
 })
 export class PearlerDesignerToolbarComponent {
-  width = model.required<number>();
-  height = model.required<number>();
   color = model.required<{ r: number; g: number; b: number }>();
 }

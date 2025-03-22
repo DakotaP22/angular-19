@@ -29,8 +29,6 @@ import { KeyValuePipe } from '@angular/common';
   `,
   template: `
     <pearler-designer-toolbar
-      [(width)]="width"
-      [(height)]="height"
       [(color)]="color"
     />
 
@@ -48,9 +46,6 @@ import { KeyValuePipe } from '@angular/common';
   `,
 })
 export class PearlerPatternMakerPageComponent {
-  private readonly pearlerGridManagerSvc = inject(PearlerGridManagerService);
-  pearlerGrids = this.pearlerGridManagerSvc.getPearlerGrids();
-
   width = signal<number>(32);
   height = signal<number>(32);
 
@@ -63,6 +58,9 @@ export class PearlerPatternMakerPageComponent {
     const color = this.color();
     return [color.r, color.g, color.b];
   });
+
+  private readonly pearlerGridManagerSvc = inject(PearlerGridManagerService);
+  pearlerGrids = this.pearlerGridManagerSvc.getPearlerGrids();
 
   onPearlerClick(gridPositionKey: string, row: number, column: number) {
     const { r, g, b } = this.color();
