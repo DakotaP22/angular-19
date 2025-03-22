@@ -52,10 +52,14 @@ export class BasicPearlerTrayComponent {
         return `repeat(${this.width()}, ${this.pearlerSize()}px)`;
     }
 
-    width = input.required<number>();
-    height = input.required<number>();
+    // width = input.required<number>();
+    // height = input.required<number>();
     pearlerSize = input<number>(8);
     rgbGrid = input.required<number[][][]>();
+
+    width = computed(() => this.rgbGrid()[0].length);
+    height = computed(() => this.rgbGrid().length);
+
     pearlerClick = output<[number, number]>();
 
     trayWidth = computed(() => this.pearlerSize()*this.width());

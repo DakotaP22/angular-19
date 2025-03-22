@@ -5,46 +5,33 @@ type RGBGrid = number[][][];
 
 @Injectable()
 export class PearlerGridManagerService {
+  private readonly baseColorArray = [255, 255, 255];
   private pearlerGrids = injectLocalStorage<Map<string, RGBGrid>>(
     'pearler-designer-grids',
     {
       defaultValue: new Map<string, RGBGrid>(),
       stringify: (grids: unknown) => {
-        return JSON.stringify(Array.from((grids as Map<string, RGBGrid>).entries()));
+        return JSON.stringify(
+          Array.from((grids as Map<string, RGBGrid>).entries())
+        );
       },
-        parse: (grids: string) => {
-            return new Map(JSON.parse(grids));
-        },
+      parse: (grids: string) => {
+        return new Map(JSON.parse(grids));
+      },
     }
   );
 
-  private readonly width = injectLocalStorage<number>('pearler-grid-width', {
-    defaultValue: 32,
-  });
-  private readonly height = injectLocalStorage<number>('pearler-grid-height', {
-    defaultValue: 32,
-  });
-  private readonly baseColorArray = [255, 255, 255];
-
   getPearlerGrids() {
-    if(this.pearlerGrids().size == 0) {
-        this.initializeGrids();
-    }
     return this.pearlerGrids;
   }
 
-  initializeGrids() {
+  initializeFreshGrids(width: number, height: number) {
     this.pearlerGrids.set(
-        new Map<string, RGBGrid>()
-            .set(this.getGridLocationKey(0, 0), this.getEmptyGrid())
-            .set(this.getGridLocationKey(1, 0), this.getEmptyGrid())
-    )
-    console.log(this.pearlerGrids())
-  } 
-
-  setGridDimensions(width: number, height: number) {
-    this.width.set(width);
-    this.height.set(height);
+      new Map<string, RGBGrid>().set(
+        this.getGridLocationKey(0, 0),
+        this.getEmptyGrid(width, height)
+      )
+    );
   }
 
   setPixelColor(
@@ -68,9 +55,9 @@ export class PearlerGridManagerService {
     });
   }
 
-  private getEmptyGrid() {
-    return Array.from({ length: this.height() }, () =>
-      Array.from({ length: this.height() }, () => this.baseColorArray)
+  private getEmptyGrid(width: number, height: number) {
+    return Array.from({ length: height }, () =>
+      Array.from({ length: width }, () => this.baseColorArray)
     );
   }
 
