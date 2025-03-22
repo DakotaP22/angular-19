@@ -52,10 +52,29 @@ export class BasicPearlerTrayComponent {
         return `repeat(${this.width()}, ${this.pearlerSize()}px)`;
     }
 
-    // width = input.required<number>();
-    // height = input.required<number>();
+    @HostBinding('style.border-top') get borderTop() {
+        return this.availableUp() ? '1px solid red' : '1px solid black';
+    }
+
+    @HostBinding('style.border-bottom') get borderBottom() {
+        return this.availableDown() ? '1px solid red' : '1px solid black';
+    }
+
+    @HostBinding('style.border-left') get borderLeft() {
+        return this.availableLeft() ? '1px solid red' : '1px solid black';
+    }
+
+    @HostBinding('style.border-right') get borderRight() {
+        return this.availableRight() ? '1px solid red' : '1px solid black';
+    }
+
+    
     pearlerSize = input<number>(8);
     rgbGrid = input.required<number[][][]>();
+    availableUp = input.required<boolean>();
+    availableDown = input.required<boolean>();
+    availableLeft = input.required<boolean>();
+    availableRight = input.required<boolean>();
 
     width = computed(() => this.rgbGrid()[0].length);
     height = computed(() => this.rgbGrid().length);

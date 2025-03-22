@@ -14,6 +14,7 @@ import { PearlerGridManagerService } from '../services/pearler-grid-manager.serv
 import { KeyValuePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { PearlerInitializationDialogComponent } from '../components/pearler-initialization-dialog.component';
+import { AvailableGridPipe } from '../pipes/available-grid.pipe';
 
 @Component({
   selector: 'pearler-pattern-maker-page',
@@ -23,6 +24,7 @@ import { PearlerInitializationDialogComponent } from '../components/pearler-init
     CanvasComponent,
     KeyValuePipe,
     PearlerInitializationDialogComponent,
+    AvailableGridPipe,
   ],
   providers: [PearlerGridManagerService],
   styles: `
@@ -37,24 +39,31 @@ import { PearlerInitializationDialogComponent } from '../components/pearler-init
     }
   `,
   template: `
-    <pearler-designer-toolbar 
-      [(color)]="color" 
+    @let pearlerGrids = this.pearlerGrids();
+    <pearler-designer-toolbar
+      [(color)]="color"
       (clear)="onClearGrids()"
-      (reset)="onResetGrids()"/>
+      (reset)="onResetGrids()"
+    />
 
     <app-canvas>
-      @for(grid of pearlerGrids() | keyvalue; track grid.key) {
+      @for(grid of pearlerGrids | keyvalue; track grid.key) {
       <basic-pearler-tray
         [rgbGrid]="grid.value"
         [pearlerSize]="12"
         (pearlerClick)="onPearlerClick(grid.key, $event[0], $event[1])"
+        [availableUp]="grid.key | isAvailable : pearlerGrids : 'up'"
+        [availableDown]="grid.key | isAvailable : pearlerGrids : 'down'"
+        [availableLeft]="grid.key | isAvailable : pearlerGrids : 'left'"
+        [availableRight]="grid.key | isAvailable : pearlerGrids : 'right'"
       />
       }
     </app-canvas>
 
-    <pearler-initialization-dialog 
+    <pearler-initialization-dialog
       [(visible)]="showPearlerInitializationDialog"
-      (initialize)="onInitializeGrid($event)"/>
+      (initialize)="onInitializeGrid($event)"
+    />
   `,
 })
 export class PearlerPatternMakerPageComponent {

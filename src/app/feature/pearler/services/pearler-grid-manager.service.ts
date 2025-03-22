@@ -1,7 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { injectLocalStorage } from 'ngxtension/inject-local-storage';
 
-type RGBGrid = number[][][];
+export type RGBGrid = number[][][];
+export type Direction = 'up' | 'down' | 'left' | 'right';
 
 @Injectable()
 export class PearlerGridManagerService {
@@ -28,23 +29,31 @@ export class PearlerGridManagerService {
   initializeFreshGrids(width: number, height: number) {
     this.pearlerGrids.set(
       new Map<string, RGBGrid>()
-      .set(
-        this.getGridLocationKey(0, 0),
-        this.getEmptyGrid(width, height)
-      )
-      .set(
-        this.getGridLocationKey(1, 0),
-        this.getEmptyGrid(width, height)
-      )
+        .set(this.getGridLocationKey(0, 0), this.getEmptyGrid(width, height))
+        .set(this.getGridLocationKey(0, -1), this.getEmptyGrid(width, height))
     );
+  }
+
+  addGrid(positionX: number, positionY: number) {
+    this.pearlerGrids.update((grids) => {
+      if (grids && grids.size > 0) {
+        const [width, height] = this.getCurrentGridDimensions();
+        const key = this.getGridLocationKey(positionX, positionY);
+        const newGrid = this.getEmptyGrid(width, height);
+
+        grids.set(key, newGrid);
+      }
+
+      return grids;
+    });
   }
 
   clearGrids() {
     this.pearlerGrids.update((grids) => {
       if (!!grids && grids.size > 0) {
-        const [ width, height ] = this.getCurrentGridDimensions();
+        const [width, height] = this.getCurrentGridDimensions();
 
-        for(const key of grids.keys()) {
+        for (const key of grids.keys()) {
           grids.set(key, this.getEmptyGrid(width, height));
         }
       }
