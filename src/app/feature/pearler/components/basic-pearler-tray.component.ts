@@ -1,11 +1,10 @@
-import { Component, computed, effect, HostBinding, inject, input } from '@angular/core';
+import { Component, computed, effect, HostBinding, inject, input, output } from '@angular/core';
 import { PearlerGridManagerService } from '../services/pearler-grid-manager.service';
 import { BackgroundColorPipe } from '../pipes/background-color.pipe';
 
 @Component({
     selector: 'basic-pearler-tray',
     imports: [BackgroundColorPipe],
-    providers: [PearlerGridManagerService],
     styles: `
         :host {
             display:  grid;
@@ -21,7 +20,7 @@ import { BackgroundColorPipe } from '../pipes/background-color.pipe';
         }
     `,
     template: `
-        @for(row of colorMatrix(); let r = $index; track r) {
+        @for(row of rgbGrid(); let r = $index; track r) {
             @for(col of row; let c = $index; track c) {
                 <div
                     class="pearler"
@@ -36,8 +35,6 @@ import { BackgroundColorPipe } from '../pipes/background-color.pipe';
 })
 
 export class BasicPearlerTrayComponent {
-    private readonly gridManager = inject(PearlerGridManagerService);
-    colorMatrix = this.gridManager.getMatrix();
 
     @HostBinding('style.width.px') get _trayWidth() {
         return this.trayWidth();
@@ -58,21 +55,13 @@ export class BasicPearlerTrayComponent {
     width = input.required<number>();
     height = input.required<number>();
     pearlerSize = input<number>(8);
-    rgb = input.required<[number, number, number]>();
+    rgbGrid = input.required<number[][][]>();
+    pearlerClick = output<[number, number]>();
 
     trayWidth = computed(() => this.pearlerSize()*this.width());
     trayHeight = computed(() => this.pearlerSize()*this.height());
-    
-    constructor() {
-        effect(() => {
-            const w = this.width();
-            const h = this.height();
 
-            this.gridManager.initializeMatrix(w, h);
-        })
-    }
-
-    onPearlerClick(row: number, col: number) {
-        this.gridManager.setPixelColor(row, col, ...this.rgb());
+    onPearlerClick(row: number, column: number) {
+        this.pearlerClick.emit([row, column]);
     }
 }

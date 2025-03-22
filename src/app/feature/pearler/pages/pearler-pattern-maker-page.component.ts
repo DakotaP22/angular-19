@@ -1,12 +1,10 @@
-import {
-  Component,
-  computed,
-  signal
-} from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { injectLocalStorage } from 'ngxtension/inject-local-storage';
 import { CanvasComponent } from '../../../shared/components/canvas.component';
 import { BasicPearlerTrayComponent } from '../components/basic-pearler-tray.component';
 import { PearlerDesignerToolbarComponent } from '../components/toolbar.component';
+import { PearlerGridManagerService } from '../services/pearler-grid-manager.service';
+import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'pearler-pattern-maker-page',
@@ -14,7 +12,9 @@ import { PearlerDesignerToolbarComponent } from '../components/toolbar.component
     PearlerDesignerToolbarComponent,
     BasicPearlerTrayComponent,
     CanvasComponent,
+    KeyValuePipe,
   ],
+  providers: [PearlerGridManagerService],
   styles: `
     :host {
         display: flex;
@@ -35,20 +35,24 @@ import { PearlerDesignerToolbarComponent } from '../components/toolbar.component
     />
 
     <app-canvas>
+      @for(grid of pearlerGrids() | keyvalue; track grid.key) {
       <basic-pearler-tray
         [width]="width()"
         [height]="height()"
+        [rgbGrid]="grid.value"
         [pearlerSize]="12"
-        [rgb]="colorArray()"
+        (pearlerClick)="onPearlerClick(grid.key, $event[0], $event[1])"
       />
+      }
     </app-canvas>
   `,
 })
 export class PearlerPatternMakerPageComponent {
+  private readonly pearlerGridManagerSvc = inject(PearlerGridManagerService);
+  pearlerGrids = this.pearlerGridManagerSvc.getPearlerGrids();
+
   width = signal<number>(32);
   height = signal<number>(32);
-
-  // color = signal<{ r: number; g: number; b: number }>({ r: 0, g: 0, b: 0 });
 
   color = injectLocalStorage('pearler-designer-color', {
     storageSync: true,
@@ -59,4 +63,19 @@ export class PearlerPatternMakerPageComponent {
     const color = this.color();
     return [color.r, color.g, color.b];
   });
+
+  onPearlerClick(gridPositionKey: string, row: number, column: number) {
+    const { r, g, b } = this.color();
+    this.pearlerGridManagerSvc.setPixelColor(
+      gridPositionKey,
+      row,
+      column,
+      r,
+      g,
+      b
+    );
+  }
+
+  _ = effect(() => console.log(this.pearlerGrids()));
+
 }
