@@ -27,8 +27,13 @@ export class PearlerGridManagerService {
 
   initializeFreshGrids(width: number, height: number) {
     this.pearlerGrids.set(
-      new Map<string, RGBGrid>().set(
+      new Map<string, RGBGrid>()
+      .set(
         this.getGridLocationKey(0, 0),
+        this.getEmptyGrid(width, height)
+      )
+      .set(
+        this.getGridLocationKey(1, 0),
         this.getEmptyGrid(width, height)
       )
     );

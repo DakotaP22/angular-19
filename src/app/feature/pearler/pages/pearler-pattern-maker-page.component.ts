@@ -39,7 +39,8 @@ import { PearlerInitializationDialogComponent } from '../components/pearler-init
   template: `
     <pearler-designer-toolbar 
       [(color)]="color" 
-      (clear)="onClearGrids()"/>
+      (clear)="onClearGrids()"
+      (reset)="onResetGrids()"/>
 
     <app-canvas>
       @for(grid of pearlerGrids() | keyvalue; track grid.key) {
@@ -98,5 +99,9 @@ export class PearlerPatternMakerPageComponent {
 
   onClearGrids() {
     this.pearlerGridManagerSvc.clearGrids();
+  }
+
+  onResetGrids() {
+    this.showPearlerInitializationDialog.set(true);
   }
 }

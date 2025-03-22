@@ -40,9 +40,11 @@ import { ColorPickerComponent } from './color-picker.component';
     <color-picker [(color)]="color" />
 
     <button pButton (click)="clear.emit()">Clear</button>
+    <button pButton (click)="reset.emit()">Reset</button>
   `,
 })
 export class PearlerDesignerToolbarComponent {
   color = model.required<{ r: number; g: number; b: number }>();
   clear = output<void>();
+  reset = output<void>();
 }
