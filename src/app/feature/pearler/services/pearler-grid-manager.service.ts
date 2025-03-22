@@ -33,7 +33,7 @@ export class PearlerGridManagerService {
 
 
     for (const key of grids.keys()) {
-      const [x, y] = key.split(':').map(s => parseInt(s));
+      const [x, y] = key.split(':').map(Number);
       
       if (minX === undefined || x < minX) minX = x;
       if (maxX === undefined || x > maxX) maxX = x;
@@ -55,7 +55,7 @@ export class PearlerGridManagerService {
     let minY: number | undefined = undefined;
     const yValues = [];
     for (const key of grids.keys()) {
-      const [x, y] = key.split(':').map((s) => parseInt(s));
+      const [x, y] = key.split(':').map(Number);
 
       if (minX === undefined || x < minX) minX = x;
       if (minY === undefined || y < minY) minY = y;
@@ -80,11 +80,6 @@ export class PearlerGridManagerService {
     this.pearlerGrids.set(
       new Map<string, RGBGrid>()
         .set(this.getGridLocationKey(0, 0), this.getEmptyGrid(width, height))
-        .set(this.getGridLocationKey(1, 0), this.getEmptyGrid(width, height))
-        .set(this.getGridLocationKey(-1, 0), this.getEmptyGrid(width, height))
-        .set(this.getGridLocationKey(0, 1), this.getEmptyGrid(width, height))
-        .set(this.getGridLocationKey(0, -1), this.getEmptyGrid(width, height))
-        .set(this.getGridLocationKey(0  , -2), this.getEmptyGrid(width, height))
         
     );
   }
@@ -151,7 +146,7 @@ export class PearlerGridManagerService {
   private parseGridLocation(locationKey: string): [number, number] {
     return locationKey
       .split(':')
-      .map((s) => parseInt(s))
+      .map(Number)
       .slice(0, 2) as [number, number];
   }
 

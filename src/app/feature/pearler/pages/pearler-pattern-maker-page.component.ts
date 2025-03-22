@@ -14,7 +14,7 @@ import { PearlerInitializationDialogComponent } from '../components/pearler-init
 import { PearlerDesignerToolbarComponent } from '../components/toolbar.component';
 import { AvailableGridPipe } from '../pipes/available-grid.pipe';
 import { GridColumnPipe, GridRowPipe, RepeatPipe } from '../pipes/grid-layout.pipe';
-import { PearlerGridManagerService } from '../services/pearler-grid-manager.service';
+import { Direction, PearlerGridManagerService } from '../services/pearler-grid-manager.service';
 
 @Component({
   selector: 'pearler-pattern-maker-page',
@@ -66,11 +66,12 @@ import { PearlerGridManagerService } from '../services/pearler-grid-manager.serv
 
           [rgbGrid]="grid.value"
           [pearlerSize]="12"
-          (pearlerClick)="onPearlerClick(grid.key, $event[0], $event[1])"
           [availableUp]="grid.key | isAvailable : pearlerGrids : 'up'"
           [availableDown]="grid.key | isAvailable : pearlerGrids : 'down'"
           [availableLeft]="grid.key | isAvailable : pearlerGrids : 'left'"
           [availableRight]="grid.key | isAvailable : pearlerGrids : 'right'"
+          (pearlerClick)="onPearlerClick(grid.key, $event[0], $event[1])"
+          (addTrayClick)="onAddGrid(grid.key, $event)"
         />
         }
       </div>
@@ -100,15 +101,9 @@ export class PearlerPatternMakerPageComponent {
   trayGridDimensions = this.pearlerGridManagerSvc.getTrayGridDimensions();
   trayGridOffset = this.pearlerGridManagerSvc.getTrayGridOffset();
 
-  _ = effect(() => {
-    console.log(`Offset: ${this.trayGridOffset().x}, ${this.trayGridOffset().y}`);
-    console.log(`Dimensions: ${this.trayGridDimensions().width}, ${this.trayGridDimensions().height}`);
-  })
-
   constructor() {
     afterNextRender(() => {
       if (this.pearlerGrids().size != 0) return;
-
       this.showPearlerInitializationDialog.set(true);
     });
   }
@@ -135,5 +130,22 @@ export class PearlerPatternMakerPageComponent {
 
   onResetGrids() {
     this.showPearlerInitializationDialog.set(true);
+  }
+
+  onAddGrid(key: string, direction: Direction) {
+    const [x, y] = key.split(':').map(Number);
+
+    if(direction == 'up') {
+      this.pearlerGridManagerSvc.addGrid(x, y - 1);
+    }
+    else if(direction == 'down') {
+      this.pearlerGridManagerSvc.addGrid(x, y + 1);
+    }
+    else if(direction == 'left') {
+      this.pearlerGridManagerSvc.addGrid(x - 1, y);
+    }
+    else {
+      this.pearlerGridManagerSvc.addGrid(x + 1, y);
+    }
   }
 }
