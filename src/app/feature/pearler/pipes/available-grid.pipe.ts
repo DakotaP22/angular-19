@@ -9,9 +9,6 @@ export class AvailableGridPipe implements PipeTransform {
     const [x, y] = this.parseGridLocation(gridKey);
     const [adjacentX, adjacentY] = this.getAdjacentGridLocation(x, y, direction);
 
-    console.log(`Checking if ${adjacentX}, ${adjacentY} is available`);
-    console.log(grids.keys())
-
     const adjacentKey = this.getGridLocationKey(adjacentX, adjacentY);
     return !grids.has(adjacentKey);
   }

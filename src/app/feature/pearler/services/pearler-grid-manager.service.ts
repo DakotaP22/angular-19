@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { injectLocalStorage } from 'ngxtension/inject-local-storage';
 
 export type RGBGrid = number[][][];
@@ -22,15 +22,70 @@ export class PearlerGridManagerService {
     }
   );
 
+  private readonly trayGridDimensions = computed(() => {
+    const grids = this.pearlerGrids();
+    if (!grids || grids.size === 0) return { width: 0, height: 0 };
+
+    let minX: number | undefined = undefined;
+    let maxX: number | undefined = undefined;
+    let minY: number | undefined = undefined;
+    let maxY: number | undefined = undefined;
+
+
+    for (const key of grids.keys()) {
+      const [x, y] = key.split(':').map(s => parseInt(s));
+      
+      if (minX === undefined || x < minX) minX = x;
+      if (maxX === undefined || x > maxX) maxX = x;
+      if (minY === undefined || y < minY) minY = y;
+      if (maxY === undefined || y > maxY) maxY = y;
+    }
+
+    const deltaX = (maxX as number) - (minX as number) + 1;
+    const deltaY = (maxY as number) - (minY as number) + 1;
+
+    return { width: deltaX, height: deltaY };
+  });
+
+  private readonly trayGridOffset = computed(() => {
+    const grids = this.pearlerGrids();
+    if (!grids || grids.size === 0) return { x: 0, y: 0 };
+
+    let minX: number | undefined = undefined;
+    let minY: number | undefined = undefined;
+    const yValues = [];
+    for (const key of grids.keys()) {
+      const [x, y] = key.split(':').map((s) => parseInt(s));
+
+      if (minX === undefined || x < minX) minX = x;
+      if (minY === undefined || y < minY) minY = y;
+    }
+
+    return { x: -1 * (minX as number), y: -1 * (minY as number) };
+  });
+
   getPearlerGrids() {
-    return this.pearlerGrids;
+    return this.pearlerGrids.asReadonly();
+  }
+
+  getTrayGridOffset() {
+    return this.trayGridOffset;
+  }
+
+  getTrayGridDimensions() {
+    return this.trayGridDimensions;
   }
 
   initializeFreshGrids(width: number, height: number) {
     this.pearlerGrids.set(
       new Map<string, RGBGrid>()
         .set(this.getGridLocationKey(0, 0), this.getEmptyGrid(width, height))
+        .set(this.getGridLocationKey(1, 0), this.getEmptyGrid(width, height))
+        .set(this.getGridLocationKey(-1, 0), this.getEmptyGrid(width, height))
+        .set(this.getGridLocationKey(0, 1), this.getEmptyGrid(width, height))
         .set(this.getGridLocationKey(0, -1), this.getEmptyGrid(width, height))
+        .set(this.getGridLocationKey(0  , -2), this.getEmptyGrid(width, height))
+        
     );
   }
 

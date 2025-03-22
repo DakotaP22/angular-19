@@ -1,20 +1,20 @@
+import { KeyValuePipe } from '@angular/common';
 import {
   afterNextRender,
   Component,
   computed,
   effect,
   inject,
-  signal,
+  signal
 } from '@angular/core';
 import { injectLocalStorage } from 'ngxtension/inject-local-storage';
 import { CanvasComponent } from '../../../shared/components/canvas.component';
 import { BasicPearlerTrayComponent } from '../components/basic-pearler-tray.component';
-import { PearlerDesignerToolbarComponent } from '../components/toolbar.component';
-import { PearlerGridManagerService } from '../services/pearler-grid-manager.service';
-import { KeyValuePipe } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
 import { PearlerInitializationDialogComponent } from '../components/pearler-initialization-dialog.component';
+import { PearlerDesignerToolbarComponent } from '../components/toolbar.component';
 import { AvailableGridPipe } from '../pipes/available-grid.pipe';
+import { GridColumnPipe, GridRowPipe, RepeatPipe } from '../pipes/grid-layout.pipe';
+import { PearlerGridManagerService } from '../services/pearler-grid-manager.service';
 
 @Component({
   selector: 'pearler-pattern-maker-page',
@@ -25,6 +25,9 @@ import { AvailableGridPipe } from '../pipes/available-grid.pipe';
     KeyValuePipe,
     PearlerInitializationDialogComponent,
     AvailableGridPipe,
+    GridRowPipe,
+    GridColumnPipe,
+    RepeatPipe,
   ],
   providers: [PearlerGridManagerService],
   styles: `
@@ -32,6 +35,10 @@ import { AvailableGridPipe } from '../pipes/available-grid.pipe';
         display: flex;
         height: 100%;
         overflow: hidden;
+    }
+
+    .pearler-tray-grid {
+      display: grid;
     }
 
     app-canvas {
@@ -47,17 +54,26 @@ import { AvailableGridPipe } from '../pipes/available-grid.pipe';
     />
 
     <app-canvas>
-      @for(grid of pearlerGrids | keyvalue; track grid.key) {
-      <basic-pearler-tray
-        [rgbGrid]="grid.value"
-        [pearlerSize]="12"
-        (pearlerClick)="onPearlerClick(grid.key, $event[0], $event[1])"
-        [availableUp]="grid.key | isAvailable : pearlerGrids : 'up'"
-        [availableDown]="grid.key | isAvailable : pearlerGrids : 'down'"
-        [availableLeft]="grid.key | isAvailable : pearlerGrids : 'left'"
-        [availableRight]="grid.key | isAvailable : pearlerGrids : 'right'"
-      />
-      }
+      <div class="pearler-tray-grid"
+        [style.gridTemplateColumns]="trayGridDimensions().width | repeat"
+        [style.gridTemplateRows]="trayGridDimensions().height | repeat"
+      >
+        @for(grid of pearlerGrids | keyvalue; track grid.key) {
+        <basic-pearler-tray
+
+          [style.gridRow]="grid.key | gridRow : trayGridOffset().y + 1"
+          [style.gridColumn]="grid.key | gridColumn : trayGridOffset().x + 1"
+
+          [rgbGrid]="grid.value"
+          [pearlerSize]="12"
+          (pearlerClick)="onPearlerClick(grid.key, $event[0], $event[1])"
+          [availableUp]="grid.key | isAvailable : pearlerGrids : 'up'"
+          [availableDown]="grid.key | isAvailable : pearlerGrids : 'down'"
+          [availableLeft]="grid.key | isAvailable : pearlerGrids : 'left'"
+          [availableRight]="grid.key | isAvailable : pearlerGrids : 'right'"
+        />
+        }
+      </div>
     </app-canvas>
 
     <pearler-initialization-dialog
@@ -81,6 +97,13 @@ export class PearlerPatternMakerPageComponent {
 
   private readonly pearlerGridManagerSvc = inject(PearlerGridManagerService);
   pearlerGrids = this.pearlerGridManagerSvc.getPearlerGrids();
+  trayGridDimensions = this.pearlerGridManagerSvc.getTrayGridDimensions();
+  trayGridOffset = this.pearlerGridManagerSvc.getTrayGridOffset();
+
+  _ = effect(() => {
+    console.log(`Offset: ${this.trayGridOffset().x}, ${this.trayGridOffset().y}`);
+    console.log(`Dimensions: ${this.trayGridDimensions().width}, ${this.trayGridDimensions().height}`);
+  })
 
   constructor() {
     afterNextRender(() => {
