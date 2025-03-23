@@ -20,6 +20,10 @@ import { BackgroundColorPipe } from '../pipes/background-color.pipe';
             cursor: pointer;
         }
 
+        .pearler.colorPickerActive {
+            cursor: url(data:image/x-icon;base64,AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAD///8BAAAAfwAAAIH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAAAcQAAAN8AAADTAAAArwAAAE8AAAAJ////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAJEAAADLAAAAEwAAAHsAAADDAAAA3wAAADP///8B////Af///wH///8B////Af///wH///8B////Af///wH///8BAAAAuQAAAHX///8B////AQAAAF0AAADtAAAAOf///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAFMAAAC/////Af///wH///8BAAAAUQAAAO0AAAA5////Af///wH///8B////Af///wH///8B////Af///wEAAAANAAAA5wAAAFH///8B////Af///wEAAABRAAAA7QAAADn///8B////Af///wH///8B////Af///wH///8B////AQAAAD0AAADtAAAARf///wH///8B////AQAAAFEAAADtAAAAOQAAACP///8B////Af///wH///8B////Af///wH///8BAAAARQAAAO0AAABF////Af///wH///8BAAAAUQAAAO0AAADvAAAAmf///wH///8B////Af///wH///8B////Af///wEAAABFAAAA7QAAAEX///8B////AQAAADUAAADxAAAA/wAAAPcAAAAr////Af///wH///8B////Af///wH///8B////AQAAAEUAAADtAAAARQAAADUAAADvAAAA/wAAAPcAAABFAAAALf///wH///8B////Af///wH///8B////Af///wH///8BAAAARQAAAO0AAADvAAAA/wAAAPcAAABFAAAAgwAAAPsAAABX////Af///wH///8B////Af///wH///8B////AQAAACUAAADvAAAA/wAAAPcAAABFAAAAgwAAAP8AAAD/AAAA+wAAAE////8B////Af///wH///8B////Af///wEAAAADAAAAoQAAAPcAAABFAAAAgwAAAP8AAAD/AAAA/wAAAP8AAADf////Af///wH///8B////Af///wH///8B////AQAAAAMAAAAvAAAALQAAAPsAAAD/AAAA/wAAAP8AAAD/AAAA+////wH///8B////Af///wH///8B////Af///wH///8B////Af///wEAAABXAAAA+wAAAP8AAAD/AAAA/wAAALX///8B////Af///wH///8B////Af///wH///8B////Af///wH///8B////AQAAAE8AAADfAAAA+wAAALUAAAAXAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//w==), default;
+        }
+
         .add-tray-btn { 
             position: absolute; 
             width: 100%; 
@@ -46,6 +50,7 @@ import { BackgroundColorPipe } from '../pipes/background-color.pipe';
         }
     `,
     template: `
+        @let cursor = this.cursor();
         @if(availableUp()) {
             <button class="add-tray-btn up" (click)="addTrayClick.emit('up')">Add&nbsp;Tray</button>
         }
@@ -63,6 +68,7 @@ import { BackgroundColorPipe } from '../pipes/background-color.pipe';
             @for(col of row; let c = $index; track c) {
                 <div
                     class="pearler"
+                    [class.colorPickerActive]="cursor == 'colorPicker'"
                     [style.backgroundColor]="col | bgColor"
                     [style.width.px]="pearlerSize()"
                     [style.height.px]="pearlerSize()"
@@ -98,17 +104,23 @@ export class BasicPearlerTrayComponent {
     availableDown = input.required<boolean>();
     availableLeft = input.required<boolean>();
     availableRight = input.required<boolean>();
+    cursor = input<'pointer' | 'colorPicker'>('pointer');
 
     width = computed(() => this.rgbGrid()[0].length);
     height = computed(() => this.rgbGrid().length);
 
-    pearlerClick = output<[number, number]>();
+    pearlerClick = output<[number, number, number[]]>();
     addTrayClick = output<Direction>();
 
     trayWidth = computed(() => this.pearlerSize()*this.width());
     trayHeight = computed(() => this.pearlerSize()*this.height());
 
     onPearlerClick(row: number, column: number) {
-        this.pearlerClick.emit([row, column]);
+        if(this.cursor() === 'colorPicker') {
+            const rgb = this.rgbGrid()[row][column];
+            this.pearlerClick.emit([row, column, rgb]);
+        } else if(this.cursor() == 'pointer') {
+            this.pearlerClick.emit([row, column, []]);
+        }
     }
 }

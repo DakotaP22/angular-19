@@ -51,6 +51,7 @@ import { Direction, PearlerGridManagerService } from '../services/pearler-grid-m
       [(color)]="color"
       (clear)="onClearGrids()"
       (reset)="onResetGrids()"
+      (colorPicker)="onColorPickerClick()"
     />
 
     <app-canvas>
@@ -60,6 +61,7 @@ import { Direction, PearlerGridManagerService } from '../services/pearler-grid-m
       >
         @for(grid of pearlerGrids | keyvalue; track grid.key) {
         <basic-pearler-tray
+          [cursor]="colorPickerActive() ? 'colorPicker' : 'pointer'"
 
           [style.gridRow]="grid.key | gridRow : trayGridOffset().y + 1"
           [style.gridColumn]="grid.key | gridColumn : trayGridOffset().x + 1"
@@ -70,7 +72,7 @@ import { Direction, PearlerGridManagerService } from '../services/pearler-grid-m
           [availableDown]="grid.key | isAvailable : pearlerGrids : 'down'"
           [availableLeft]="grid.key | isAvailable : pearlerGrids : 'left'"
           [availableRight]="grid.key | isAvailable : pearlerGrids : 'right'"
-          (pearlerClick)="onPearlerClick(grid.key, $event[0], $event[1])"
+          (pearlerClick)="onPearlerClick(grid.key, $event[0], $event[1], $event[2])"
           (addTrayClick)="onAddGrid(grid.key, $event)"
         />
         }
@@ -101,6 +103,8 @@ export class PearlerPatternMakerPageComponent {
   trayGridDimensions = this.pearlerGridManagerSvc.getTrayGridDimensions();
   trayGridOffset = this.pearlerGridManagerSvc.getTrayGridOffset();
 
+  colorPickerActive = signal<boolean>(false);
+
   constructor() {
     afterNextRender(() => {
       if (this.pearlerGrids().size != 0) return;
@@ -108,16 +112,22 @@ export class PearlerPatternMakerPageComponent {
     });
   }
 
-  onPearlerClick(gridPositionKey: string, row: number, column: number) {
-    const { r, g, b } = this.color();
-    this.pearlerGridManagerSvc.setPixelColor(
-      gridPositionKey,
-      row,
-      column,
-      r,
-      g,
-      b
-    );
+  onPearlerClick(gridPositionKey: string, row: number, column: number, color: number[]) {
+    if(this.colorPickerActive()) {
+      this.color.set({ r: color[0], g: color[1], b: color[2] });
+      this.colorPickerActive.set(false);
+    } else {
+      const { r, g, b } = this.color();
+      this.pearlerGridManagerSvc.setPixelColor(
+        gridPositionKey,
+        row,
+        column,
+        r,
+        g,
+        b
+      );
+    }
+   
   }
 
   onInitializeGrid({ width, height }: { width: number; height: number }) {
@@ -147,5 +157,9 @@ export class PearlerPatternMakerPageComponent {
     else {
       this.pearlerGridManagerSvc.addGrid(x + 1, y);
     }
+  }
+
+  onColorPickerClick() {
+    this.colorPickerActive.set(true);
   }
 }
