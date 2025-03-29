@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Direction, RGBGrid } from '../services/pearler-grid-manager.service';
+import { Direction } from '../services/pearler-grid-manager.service';
+import { RGBGrid } from '../../../shared/models/RGBGrid';
 
 @Pipe({
   name: 'isAvailable',

@@ -1,7 +1,7 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { injectLocalStorage } from 'ngxtension/inject-local-storage';
+import { RGBGrid } from '../../../shared/models/RGBGrid';
 
-export type RGBGrid = number[][][];
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
 @Injectable()
