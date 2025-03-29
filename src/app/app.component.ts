@@ -32,6 +32,10 @@ export class AppComponent {
     {
       label: 'Pearler Designer',
       command: () => this.router.navigate(['/pearler/designer'])
+    },
+    {
+      label: 'Multi-stitch Designer',
+      command: () => this.router.navigate(['/multi-stitch/designer'])
     }
   ]
 }
