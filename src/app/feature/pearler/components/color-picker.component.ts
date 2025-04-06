@@ -1,7 +1,7 @@
 import { Component, computed, linkedSignal, model, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ColorPickerModule } from 'primeng/colorpicker';
-import { BackgroundColorPipe } from '../pipes/background-color.pipe';
+import { BackgroundColorPipe } from '../../../shared/pipe/background-color.pipe';
 
 export type RGB_Options = {
     r: number;

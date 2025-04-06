@@ -1,6 +1,6 @@
 import { Component, computed, effect, HostBinding, inject, input, output } from '@angular/core';
 import { Direction, PearlerGridManagerService } from '../services/pearler-grid-manager.service';
-import { BackgroundColorPipe } from '../pipes/background-color.pipe';
+import { BackgroundColorPipe } from '../../../shared/pipe/background-color.pipe';
 
 @Component({
     selector: 'basic-pearler-tray',
