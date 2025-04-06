@@ -17,8 +17,8 @@ export class MultiStitchGridManagerService {
   }
 
   initializeFreshGrid(width: number, height: number) {
-    const emptyGrid = Array.from({ length: width }, () =>
-      Array.from({ length: height }, () => this.baseColorArray)
+    const emptyGrid = Array.from({ length: height }, () =>
+      Array.from({ length: width }, () => this.baseColorArray)
     );
     this.rgbGrid.set(emptyGrid);
   }
@@ -26,7 +26,7 @@ export class MultiStitchGridManagerService {
   setPixelColor(row: number, col: number, r: number, g: number, b: number) {
     this.rgbGrid.update((currentGrid) => {
         if(currentGrid) {
-            currentGrid[row][col] = [r, g, b]; 
+            currentGrid[col][row] = [r, g, b]; 
         }
 
         return currentGrid;
@@ -34,20 +34,20 @@ export class MultiStitchGridManagerService {
   }
 
   addRowAbove() {
-    this.rgbGrid.update((currentGrid) => {
-        if(!currentGrid) return currentGrid;
+    // this.rgbGrid.update((currentGrid) => {
+    //     if(!currentGrid) return currentGrid;
 
-        const newRow = Array.from({ length: currentGrid ? currentGrid[0].length : 0 }, () => this.baseColorArray);
-        return [newRow, ...currentGrid];
-    })
+    //     const newRow = Array.from({ length: currentGrid ? currentGrid[0].length : 0 }, () => this.baseColorArray);
+    //     return [newRow, ...currentGrid];
+    // })
   }
 
   addRowBelow() {
-    this.rgbGrid.update((currentGrid) => {
-        if(!currentGrid) return currentGrid;
+    // this.rgbGrid.update((currentGrid) => {
+    //     if(!currentGrid) return currentGrid;
 
-        const newRow = Array.from({ length: currentGrid ? currentGrid[0].length : 0 }, () => this.baseColorArray);
-        return [...currentGrid, newRow];
-    })
+    //     const newRow = Array.from({ length: currentGrid ? currentGrid[0].length : 0 }, () => this.baseColorArray);
+    //     return [...currentGrid, newRow];
+    // })
   }
 }

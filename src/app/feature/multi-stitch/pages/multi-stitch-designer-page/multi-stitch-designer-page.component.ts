@@ -15,8 +15,15 @@ import { CssRepeatPipe } from '../../../../shared/pipe/css-repeat.pipe';
     }
 
     .multi-stitch-wrapper {
-        display: grid;
-        width: fit-content;
+        display: flex;
+    }
+
+    .multistitch-column {
+      // border: 1px solid red;
+    }
+
+    .multistitch-column.odd {
+      margin-top: 10px;
     }
 
     .bead {
@@ -28,22 +35,26 @@ import { CssRepeatPipe } from '../../../../shared/pipe/css-repeat.pipe';
         height: 20px;
     }
 
-    .bead.offset {
-      margin-left: 8.5px;
-    }
+    
     `,
   template: `
     <app-canvas>
-        <div
-            class="multi-stitch-wrapper"
-            [style.gridTemplateRows]="height() | cssRepeat"
-            [style.gridTemplateColumns]="width() | cssRepeat"
-        >
-            @for(row of multiStitchGrid(); let r = $index; track row) { 
-                @for(col of row; let c = $index; track col) {
-                    <div class="bead"></div>
-                } 
+        <div class="multi-stitch-wrapper" >
+
+          @for (row of multiStitchGrid(); let r = $index; track r){
+            <div 
+              class="multistitch-column"
+              [class.odd]="r % 2 != 0"
+            >
+          
+            @for(col of row; let c = $index; track c) {
+              <div class="bead"></div>
             }
+          
+            </div>
+
+          }
+
         </div>
       </app-canvas>
   `,
