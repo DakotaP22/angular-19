@@ -1,11 +1,11 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
-import { MultiStitchGridManagerService } from './services/multi-stitch-grid-manager.service';
+import { Component, computed, inject } from '@angular/core';
 import { CanvasComponent } from '../../../../shared/components/canvas.component';
-import { CssRepeatPipe } from '../../../../shared/pipe/css-repeat.pipe';
+import { MultiStitchGridManagerService } from './services/multi-stitch-grid-manager.service';
+import { MultiStitchRowNumberPipe } from './pipes/multi-stitch-row-number.pipe';
 
 @Component({
   selector: 'multi-stitch-designer-page',
-  imports: [CanvasComponent, CssRepeatPipe],
+  imports: [CanvasComponent, MultiStitchRowNumberPipe],
   providers: [MultiStitchGridManagerService],
   styles: `
     :host {
@@ -19,20 +19,25 @@ import { CssRepeatPipe } from '../../../../shared/pipe/css-repeat.pipe';
     }
 
     .multistitch-column {
-      // border: 1px solid red;
+      display: flex;
+      flex-direction: column-reverse;
     }
 
-    .multistitch-column.odd {
-      margin-top: 10px;
+    .multistitch-column.even {
+      margin-bottom: 10px;
     }
 
     .bead {
         border: .5px solid black;
-        display: block;
+        display: grid;
+        place-content: center;
         box-sizing: border-box;
         cursor: pointer;
         width: 17px;
         height: 20px;
+
+        font-size: 8px;
+        text-align: center;
     }
 
     
@@ -41,14 +46,16 @@ import { CssRepeatPipe } from '../../../../shared/pipe/css-repeat.pipe';
     <app-canvas>
         <div class="multi-stitch-wrapper" >
 
-          @for (row of multiStitchGrid(); let r = $index; track r){
+          @for (col of multiStitchGrid(); let c = $index; track c){
             <div 
               class="multistitch-column"
-              [class.odd]="r % 2 != 0"
+              [class.even]="c % 2 == 0"
             >
           
-            @for(col of row; let c = $index; track c) {
-              <div class="bead"></div>
+            @for(row of col; let r = $index; track r) {
+              <div class="bead">
+                {{ r | rowNumber:c}}
+              </div>
             }
           
             </div>
